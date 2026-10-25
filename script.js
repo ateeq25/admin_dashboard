@@ -147,3 +147,51 @@ document.addEventListener("click", (event) => {
     profileButton.setAttribute("aria-expanded", "false");
   }
 });
+
+// ========================================
+// DARK MODE / LIGHT MODE
+// ========================================
+
+const themeToggle = $("#theme-toggle");
+
+function setTheme(theme) {
+  // Apply the selected theme to the entire document.
+  document.documentElement.dataset.theme = theme;
+
+  // Remember the preference in this browser.
+  try {
+    localStorage.setItem("theme", theme);
+  } catch (error) {
+    console.warn("Could not save the theme preference.", error);
+  }
+
+  // Update the button's accessible label and tooltip.
+  const nextTheme = theme === "dark" ? "light" : "dark";
+  const label = `Switch to ${nextTheme} mode`;
+
+  themeToggle.setAttribute("aria-label", label);
+  themeToggle.setAttribute("title", label);
+
+  // Update the icon.
+  themeToggle.innerHTML = `
+    <i data-lucide="${theme === "dark" ? "sun" : "moon"}"
+       aria-hidden="true"></i>
+  `;
+
+  // Render the new Lucide icon.
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
+// Initialise the switcher using the theme already applied in index.html.
+const initialTheme =
+  document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+
+setTheme(initialTheme);
+
+// Switch themes when the button is clicked.
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.dataset.theme;
+  setTheme(currentTheme === "dark" ? "light" : "dark");
+});
